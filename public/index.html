@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+	<title>Dependent probabilities</title>
+
+	<link rel='icon' href='favicon.svg'>
+	<link rel='stylesheet' href='global.css'>
+	<link rel='stylesheet' href='build/bundle.css'>
+
+	<script defer src='build/bundle.js'></script>
+</head>
+
+<body>
+
+	<svg style="width: 0; height: 0; display: block;">
+		<defs>
+			<marker id="arrowhead" markerWidth="5" markerHeight="7" 
+			refX="4" refY="3.5" orient="auto">
+				<polygon fill="#555" points="0 0, 5 3.5, 0 7" />
+			</marker>
+		</defs>
+	</svg>
+
+	<div id="root">
+		
+	</div>
+
+	<div style="box-sizing:  border-box; max-width: 60em; margin: auto; padding: 0 1em">
+		<h2>Dependent probabilities explained geometrically</h2>
+
+		<p>
+			Above you see two squares of side length 1x1, i.e. area of one. Both represent the sample space two random events.
+		</p>
+
+		<p>
+			The total area of 1 is partitioned into 4 colored areas. The four areas represent the probabilities of each possible outcome:
+		</p>
+		<ul style="list-style: none;">
+			<li><span style="width: 0.8em;height: 0.8em; background-color: #faf; display: inline-block;vertical-align: middle;"></span> A and B</li>
+			<li><span style="width: 0.8em;height: 0.8em; background-color: #fa0; display: inline-block;vertical-align: middle;"></span> A and not B</li>
+			<li><span style="width: 0.8em;height: 0.8em; background-color: #0af; display: inline-block;vertical-align: middle;"></span> not A and B</li>
+			<li><span style="width: 0.8em;height: 0.8em; background-color: #0a0; display: inline-block;vertical-align: middle;"></span> not A and not B</li>
+		</ul>
+		<p>
+			Each colored area in the right square has the same area as the matching colored area in the left square. The rectangles are just packed differently. In the left square the colored rectangles are squished so that the <span style="padding: 1px; background: #faf7;">pink</span> and <span style="padding: 1px; background: #fa07;">orange</span> rectangles have the same width (<span style="padding: 1px; background: #0af7;">blue</span> and <span style="padding: 1px; background: #0a07;">green</span> respectively). In the right square the rectangles are squished to make the <span style="padding: 1px; background: #faf7;">pink</span> and <span style="padding: 1px; background: #0af7;">blue</span> rectangle the same height (<span style="padding: 1px; background: #fa07;">orange</span> and <span style="padding: 1px; background: #0a07;">green</span> respectively).
+		</p>
+		<p>
+			The alignment if the rectangles allows to not interpret their areas as probabilities but also their side lengths. In the left square the widths of the rectangles correspond to the probability of a single event (labeled A by default) and it's complement. In the right square the height of the rectangles correspond to the probability of the second event (named B by default).
+		</p>
+		<p>
+			The rectangle heights in the left square and the rectangles widths in the right square correspond to the dependent probabilities.
+		</p>
+		<p>
+			By dragging the sliders you experience how the the whole system has only three degrees of freedom and how the dependent probabilities P(A|B) and P(B|A) relate to each other in a non-linear and sometimes surprising way.
+		</p>
+		<p>
+			Try to find a configuration in which a colored rectangle on the left side is very shallow but the same colored rectangle on the right side is really wide.
+		</p>
+		<p>
+			<a href="https://en.wikipedia.org/wiki/Bayes%27_theorem" title="Bayes theorem on wikipedia">Bayes theorem</a> corresponds to the conversion of the side lengths of one rectangle to the side lengths of the other same colored rectangle.
+		</p>
+	</div>
+</body>
+</html>
