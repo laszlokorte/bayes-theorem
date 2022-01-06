@@ -59,10 +59,6 @@
 		
 		probTree = old
 	}
-
-	function clamp(min, max, v) {
-		return Math.max(min, Math.min(max, 1*v))
-	}
 </script>
 
 <style>
@@ -191,8 +187,8 @@ Label: <input required type="text" maxlength="1" size="1" value={probTree.labels
 </div>
 	</div>
 
-	<Chart onchange={(t) => probTree = t} probTree={probTree} direction="vertical" />
+	<Chart onchange={(t) => probTree = t} setProbabilities={setProbabilities} probTree={probTree} direction="vertical" />
 
-		<Chart onchange={(t) => probTree = baysianTranspose(t)} probTree={transposed} direction="horizontal" />
+		<Chart onchange={(t) => probTree = baysianTranspose(t)} probTree={transposed} setProbabilities={setTransposed} direction="horizontal" />
 
 </div>

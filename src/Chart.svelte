@@ -2,6 +2,7 @@
 	export let probTree
 	export let direction
 	export let onchange
+	export let setProbabilities
 
 	const formatter = new Intl.NumberFormat(navigator.locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
 
@@ -58,7 +59,11 @@
 			dragFalseChild = null;
 		}
 	}
-	
+
+	function clamp(min, max, v) {
+		return Math.max(min, Math.min(max, 1*v))
+	}
+
 
 	function wheel(evt) {
 		if(!evt.altKey && !evt.shiftKey) {
@@ -68,27 +73,16 @@
 		evt.preventDefault();
 		evt.stopPropagation()
 
-		const grid = evt.currentTarget.closest('.grid')
-		const child = evt.currentTarget.closest('.children')
+		const trueChild = evt.currentTarget.getAttribute('data-child') === 'true'
+		const falseChild = evt.currentTarget.getAttribute('data-child') === 'false'
 		const d = Math.sign(evt.wheelDeltaY) * 0.05
-		const old = JSON.parse(grid.querySelector('.body').dataset.tree)
 
-		if(grid.classList.contains('v')) {
-			if(!child || (evt.shiftKey && evt.altKey)) {
-				setProbabilities(old, 'self', clamp(0,1, old.self + d))
-			} else if(child.classList.contains('true-children')) {
-				setProbabilities(old, 0, clamp(0,1,old.children[0] + d))
-			} else if(child.classList.contains('false-children')) {
-				setProbabilities(old, 1, clamp(0,1,old.children[1] + d))
-			}
-		} else if(grid.classList.contains('h')) {
-			if(!child || (evt.shiftKey && evt.altKey)) {
-				setTransposed(old, 'self', clamp(0,1,old.self + d))
-			} else if(child.classList.contains('true-children')) {
-				setTransposed(old, 0, clamp(0,1,old.children[0] + d))
-			} else if(child.classList.contains('false-children')) {
-				setTransposed(old, 1, clamp(0,1,old.children[1] + d))
-			}
+		if(!(trueChild || falseChild) || (evt.shiftKey && evt.altKey)) {
+			setProbabilities(probTree, 'self', clamp(0,1, probTree.self + d))
+		} else if(trueChild) {
+			setProbabilities(probTree, 0, clamp(0,1,probTree.children[0] + d))
+		} else if(falseChild) {
+			setProbabilities(probTree, 1, clamp(0,1,probTree.children[1] + d))
 		}
 	}
 </script>
@@ -108,8 +102,9 @@
 
 <div bind:this={dragRef} data-tree={JSON.stringify(probTree)}>
 {#if direction=='vertical'}
-<svg viewBox="-200 -200 1400 1400" font-size="50">
+<svg viewBox="-200 -200 1400 1400" font-size="50" on:wheel={wheel}>
 	
+
 
 	<rect fill="#faf" x="0" y="0" width={probTree.self*1000} height={probTree.children[0]*1000} />
 	<rect fill="#0af" x={probTree.self*1000} y="0" width={(1-probTree.self)*1000} height={(probTree.children[1])*1000} />
@@ -126,12 +121,6 @@
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" x2="0" y2="1050" x1={400} y1="1050" stroke-dasharray="10 10" />
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" x1="600" y1="1050" x2={1000} y2="1050" stroke-dasharray="10 10" />
 
-
-	<rect style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[0]*(1000-6)} x="0" height="6" width={probTree.self*1000-5} on:mousedown={dragStart} data-child="true" class:dragging={dragTrueChild} />
-
-	<rect style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[1]*(1000-6)} x={probTree.self*(1000-6)+5} height="6" width={(1-probTree.self)*1000} on:mousedown={dragStart} data-child="false" class:dragging={dragFalseChild} />
-
-	<rect style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.self*(1000-6)} y="-100" width="6" height="1100" on:mousedown={dragStart} class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null} />
 
 
 	
@@ -235,6 +224,17 @@
 	<text stroke="#0a0" stroke-width="10" clip-path={`path('M${probTree.self*1000},${probTree.children[1]*1000}L1000,${probTree.children[1]*1000}L1000,1000L${probTree.self*1000},1000Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2 + (probTree.self > 0.5 ? 0 : -50)} y={500 + probTree.children[1]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
+
+
+	<rect pointer-events="all" on:wheel={wheel} data-child="true" fill="none" x="0" y="0" width={probTree.self*1000} height={1000} />
+	<rect pointer-events="all" on:wheel={wheel} data-child="false" fill="none" x={probTree.self*1000} y="0" width={(1-probTree.self)*1000} height={1000} />
+
+	<rect on:wheel={wheel} style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[0]*(1000-6)} x="0" height="6" width={probTree.self*1000-5} on:mousedown={dragStart} data-child="true" class:dragging={dragTrueChild} />
+
+	<rect on:wheel={wheel} style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[1]*(1000-6)} x={probTree.self*(1000-6)+5} height="6" width={(1-probTree.self)*1000} on:mousedown={dragStart} data-child="false" class:dragging={dragFalseChild} />
+
+	<rect style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.self*(1000-6)} y="-100" width="6" height="1100" on:mousedown={dragStart} class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null} />
+
 </svg>
 {:else}
 <svg viewBox="-200 -200 1400 1400" font-size="50">
@@ -254,13 +254,6 @@
 	
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" y2="0" x2="1050" y1={400} x1="1050" stroke-dasharray="10 10" />
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" y1="600" x1="1050" y2={1000} x2="1050" stroke-dasharray="10 10" />
-
-
-	<rect style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[0]*(1000-6)} y="0" width="6" height={probTree.self*1000-5} on:mousedown={dragStart}  data-child="true" class:dragging={dragTrueChild}/>
-
-	<rect style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[1]*(1000-6)} y={probTree.self*(1000-6)+5} width="6" height={(1-probTree.self)*1000} on:mousedown={dragStart}  data-child="false" class:dragging={dragFalseChild}/>
-
-	<rect style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.self*(1000-6)} x="-100" height="6" width="1100" on:mousedown={dragStart} class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null}/>
 
 
 	
@@ -362,6 +355,17 @@
 	<text  clip-path={`path('M${probTree.children[1]*1000},${probTree.self*1000}L${probTree.children[1]*1000},1000L1000,1000L1000,${probTree.self*1000}Z')`} stroke="#0a0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={500 + probTree.children[1]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
+
+
+	<rect pointer-events="all" on:wheel={wheel} data-child="true" fill="none" x="0" y="0" height={probTree.self*1000} width={1000} />
+	<rect pointer-events="all" on:wheel={wheel} data-child="false" fill="none" y={probTree.self*1000} x="0" height={(1-probTree.self)*1000} width={1000} />
+	
+	<rect on:wheel={wheel} style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[0]*(1000-6)} y="0" width="6" height={probTree.self*1000-5} on:mousedown={dragStart}  data-child="true" class:dragging={dragTrueChild}/>
+
+	<rect on:wheel={wheel} style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[1]*(1000-6)} y={probTree.self*(1000-6)+5} width="6" height={(1-probTree.self)*1000} on:mousedown={dragStart}  data-child="false" class:dragging={dragFalseChild}/>
+
+	<rect style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.self*(1000-6)} x="-100" height="6" width="1100" on:mousedown={dragStart} class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null}/>
+
 </svg>
 {/if}
 	
