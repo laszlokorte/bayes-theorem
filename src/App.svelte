@@ -99,6 +99,11 @@
 		width: 5em;
 		margin: 0;
 	}
+	
+	input[type=text] {
+		width: 5em;
+		margin: 0;
+	}
 
 	.titel-bar {
 		margin: 0;
@@ -129,29 +134,29 @@
 		display: inline-block;
 	}
 </style>
-
-<div class="titel-bar">
-	Dependent probabilities
+<div style="box-sizing:  border-box; max-width: 70em; margin: auto; padding: 0 1em">
+<div style="display: flex; align-items: center; justify-content: space-between;">
+	<h1>Dependent Probabilities / Bayes&apos; Theorem</h1>
 
 	<span style="font-size: 1rem; font-weight: normal;">
-		Precision: 
+		Decimal Digits: 
 		<input type="number" size="3" bind:value={fractionDigits} min="2" max="3">
 	</span>
+
 </div>
 
-<p style="text-align: center;">
+<p>
 	To adjust the probabilities use the slider controls or drag the borders of the colored rectangles directly.
 </p>
-
-<center>
-	<button class="reset" on:click={reset}>Reset</button>
-</center>
-
+	
+</div>
 <div class="container">
 	<div>
 		<div class="slider-container" data-tree={JSON.stringify(probTree)}>
-<label style="grid-column: 1 / -1; justify-self: start;">
-Label: <input required type="text" maxlength="1" size="1" value={probTree.labels[0]} on:input={(evt) => {probTree.labels[0] = evt.currentTarget.value || 'A'}} placeholder="A"></label>
+<label for="label_a">Label: </label>
+<input id="label_a" style="justify-self: start;" required type="text" maxlength="1" size="1" value={probTree.labels[0]} on:input={(evt) => {probTree.labels[0] = evt.currentTarget.value || 'A'}} placeholder="A">
+	<button class="reset" on:click={reset}>Reset</button>
+
 <span>Pr({probTree.labels[0]}):</span> 
 <input style="accent-color:black" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(probTree.self).toFixed(fractionDigits)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
 <input length="4" type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(probTree.self).toFixed(fractionDigits)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
@@ -169,8 +174,10 @@ Label: <input required type="text" maxlength="1" size="1" value={probTree.labels
 	
 <div>
 	<div class="slider-container" data-tree={JSON.stringify(transposed)}>
-		<label style="grid-column: 1 / -1; justify-self: start;">
-Label: <input required type="text" maxlength="1" size="1" value={probTree.labels[1]} on:input={(evt) => {probTree.labels[1] = evt.currentTarget.value || 'B'}} placeholder="B"></label>
+		<label for="label_b">
+Label:</label> <input id="label_b" style="justify-self: start;" required type="text" maxlength="1" size="1" value={probTree.labels[1]} on:input={(evt) => {probTree.labels[1] = evt.currentTarget.value || 'B'}} placeholder="B">
+
+	<button class="reset" on:click={reset}>Reset</button>
 <span>Pr({transposed.labels[0]}): </span>
 <input style="accent-color:#000" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(transposed.self).toFixed(fractionDigits)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
 <input length="4" type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(transposed.self).toFixed(fractionDigits)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />

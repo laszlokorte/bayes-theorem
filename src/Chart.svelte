@@ -229,11 +229,17 @@
 	<rect pointer-events="all" on:wheel={wheel} data-child="true" fill="none" x="0" y="0" width={probTree.self*1000} height={1000} />
 	<rect pointer-events="all" on:wheel={wheel} data-child="false" fill="none" x={probTree.self*1000} y="0" width={(1-probTree.self)*1000} height={1000} />
 
-	<rect on:wheel={wheel} style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[0]*(1000-6)} x="0" height="6" width={probTree.self*1000-5} on:mousedown={dragStart} data-child="true" class:dragging={dragTrueChild} />
+	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[0]*(1000-6)} x="0" height="6" width={probTree.self*1000-5}  class:dragging={dragTrueChild} />
 
-	<rect on:wheel={wheel} style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[1]*(1000-6)} x={probTree.self*(1000-6)+5} height="6" width={(1-probTree.self)*1000} on:mousedown={dragStart} data-child="false" class:dragging={dragFalseChild} />
+	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[1]*(1000-6)} x={probTree.self*(1000-6)+5} height="6" width={(1-probTree.self)*1000}  class:dragging={dragFalseChild} />
 
-	<rect style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.self*(1000-6)} y="-100" width="6" height="1100" on:mousedown={dragStart} class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null} />
+	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.self*(1000-6)} y="-100" width="6" height="1100" class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null} />
+
+	<rect on:wheel={wheel} style="cursor: row-resize;" fill="transparent" pointer-events="all" y={probTree.children[0]*(1000-50)} x="0" height="50" width={probTree.self*1000-5} on:mousedown={dragStart} data-child="true" />
+
+	<rect on:wheel={wheel} style="cursor: row-resize;" fill="transparent" pointer-events="all" y={probTree.children[1]*(1000-50)} x={probTree.self*(1000)+5} height="50" width={(1-probTree.self)*1000} on:mousedown={dragStart} data-child="false" />
+
+	<rect style="cursor: col-resize;" fill="transparent" pointer-events="all" x={probTree.self*(1000-50)} y="-100" width="50" height="1100" on:mousedown={dragStart} />
 
 </svg>
 {:else}
@@ -360,11 +366,17 @@
 	<rect pointer-events="all" on:wheel={wheel} data-child="true" fill="none" x="0" y="0" height={probTree.self*1000} width={1000} />
 	<rect pointer-events="all" on:wheel={wheel} data-child="false" fill="none" y={probTree.self*1000} x="0" height={(1-probTree.self)*1000} width={1000} />
 	
-	<rect on:wheel={wheel} style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[0]*(1000-6)} y="0" width="6" height={probTree.self*1000-5} on:mousedown={dragStart}  data-child="true" class:dragging={dragTrueChild}/>
+	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[0]*(1000-6)} y="0" width="6" height={probTree.self*1000-5} class:dragging={dragTrueChild}/>
 
-	<rect on:wheel={wheel} style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[1]*(1000-6)} y={probTree.self*(1000-6)+5} width="6" height={(1-probTree.self)*1000} on:mousedown={dragStart}  data-child="false" class:dragging={dragFalseChild}/>
+	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[1]*(1000-6)} y={probTree.self*(1000-6)+5} width="6" height={(1-probTree.self)*1000} class:dragging={dragFalseChild}/>
 
-	<rect style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.self*(1000-6)} x="-100" height="6" width="1100" on:mousedown={dragStart} class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null}/>
+	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.self*(1000-6)} x="-100" height="6" width="1100" class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null} />
+
+	<rect on:wheel={wheel} style="cursor: col-resize;" fill="transparent" x={probTree.children[0]*(1000-50)} y="0" width="50" height={probTree.self*1000-5} on:mousedown={dragStart}  data-child="true"/>
+
+	<rect on:wheel={wheel} style="cursor: col-resize;" fill="transparent" x={probTree.children[1]*(1000-50)} y={probTree.self*(1000-5)+5} width="50" height={(1-probTree.self)*1000} on:mousedown={dragStart}  data-child="false" />
+
+	<rect  on:wheel={wheel} style="cursor: row-resize;" fill="transparent" y={probTree.self*(1000-50)} x="-100" height="50" width="1100" on:mousedown={dragStart} />
 
 </svg>
 {/if}
