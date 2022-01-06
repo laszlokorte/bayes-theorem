@@ -595,7 +595,7 @@ Label: <input required type="text" maxlength="3" size="3" value={probTree.labels
 	</div>
 
 </div>
-	<Chart probTree={probTree} direction="vertical" />
+	<Chart onchange={(t) => probTree = t} probTree={probTree} direction="vertical" />
 	</div>
 
 	
@@ -695,7 +695,7 @@ Label: <input required type="text" maxlength="3" size="3" value={probTree.labels
 		</div>
 	</div>
 </div>
-		<Chart probTree={transposed} direction="horizontal" />
+		<Chart onchange={(t) => probTree = baysianTranspose(t)} probTree={transposed} direction="horizontal" />
 
 	</div>
 

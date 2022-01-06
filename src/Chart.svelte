@@ -1,10 +1,74 @@
 <script>
 	export let probTree
 	export let direction
+	export let onchange
+
+	const formatter = new Intl.NumberFormat(navigator.locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
 
 
+	let dragTarget = null
+	let dragTrueChild = null
+	let dragFalseChild = null
+	let dragRef = null
+
+	function dragStart(evt) {
+		evt.preventDefault()
+		dragTarget = evt.currentTarget;
+		
+		dragTrueChild = dragTarget.getAttribute('data-child') === 'true'
+		dragFalseChild = dragTarget.getAttribute('data-child') === 'false'
+	}
+	
+	function dragMove(evt) {
+		const factor = 1000 / 1400;
+		if(dragTarget) {
+			const dragVertical = (direction === 'vertical')
+			const children = dragTrueChild || dragFalseChild
+			const percent = dragVertical^children ? (evt.pageX - (dragRef.offsetLeft + dragRef.offsetWidth*(1-factor)/2))/(dragRef.offsetWidth*factor) :  (evt.pageY - (dragRef.offsetTop + dragRef.offsetWidth*(1-factor)/2))/(dragRef.offsetHeight*factor)
+
+			const percentClamped = Math.max(0, Math.min(percent, 1))
+			
+			const tree = JSON.parse(dragRef.dataset.tree)
+
+			if(dragVertical) {
+				if(dragTrueChild) {
+					tree.children[0] = percentClamped
+				} else if(dragFalseChild) {
+					tree.children[1] = percentClamped
+				} else {
+					tree.self = percentClamped
+				}
+			} else {				
+				if(dragTrueChild) {
+					tree.children[0] = percentClamped
+				} else if(dragFalseChild) {
+					tree.children[1] = percentClamped
+				} else {
+					tree.self = percentClamped
+				}
+			}
+			onchange(tree, dragTrueChild)
+		}
+	}
+	
+	function dragEnd(evt) {
+		if(dragTarget) {
+			dragTarget = null;
+			dragTrueChild = null;
+			dragFalseChild = null;
+		}
+	}
 </script>
 
+<style>
+	.dragging {
+		fill:  yellow;
+	}
+</style>
+
+<svelte:window on:mousemove={dragMove}  on:mouseup={dragEnd} />
+
+<div bind:this={dragRef} data-tree={JSON.stringify(probTree)}>
 {#if direction=='vertical'}
 <svg style="width: 50vmin; height: auto;" viewBox="-200 -200 1400 1400" font-size="50">
 	
@@ -25,19 +89,19 @@
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" x1="600" y1="1050" x2={1000} y2="1050" stroke-dasharray="10 10" />
 
 
-	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[0]*(1000-6)} x="0" height="6" width={probTree.self*1000-5} />
+	<rect style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[0]*(1000-6)} x="0" height="6" width={probTree.self*1000-5} on:mousedown={dragStart} data-child="true" class:dragging={dragTrueChild} />
 
-	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[1]*(1000-6)} x={probTree.self*(1000-6)+5} height="6" width={(1-probTree.self)*1000} />
+	<rect style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.children[1]*(1000-6)} x={probTree.self*(1000-6)+5} height="6" width={(1-probTree.self)*1000} on:mousedown={dragStart} data-child="false" class:dragging={dragFalseChild} />
 
-	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.self*(1000-6)} y="-100" width="6" height="1100" />
+	<rect style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.self*(1000-6)} y="-100" width="6" height="1100" on:mousedown={dragStart} class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null} />
 
-
-	<rect fill="none" stroke-width="10" stroke="#fff" x="-100" y="-100" width="1200" height="1200" />
 
 	
 
-	<text  text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2} y={-50}><tspan>Pr(</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan></text>
-	<text  text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2} y={-50}><tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan></text>
+	<text  text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2} y={-50}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
+	</text>
+	<text  text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2} y={-50}><tspan>Pr(</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan></text>
 	<text  text-anchor="middle" dominant-baseline="middle" x={500} y={1050}>1</text>
 
 	{#if probTree.self > 0.5}
@@ -67,16 +131,16 @@
 	
 
 	<text  text-anchor="start" dominant-baseline="middle" x={1020} y={probTree.children[1]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="start" dominant-baseline="middle" x={1020} y={500 + probTree.children[1]*500}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>|</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 	<text clip-path={`path('M0,0L${probTree.self*1000},0L${probTree.self*1000},${probTree.children[0]*1000}L0,${probTree.children[0]*1000}Z')`} text-anchor="start" dominant-baseline="middle" x={20} y={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 	<text clip-path={`path('M0,${probTree.children[0]*1000}L${probTree.self*1000},${probTree.children[0]*1000}L${probTree.self*1000},1000L0,1000Z')`} text-anchor="start" dominant-baseline="middle" x={20} y={500 + probTree.children[0]*500}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 
 	<text text-anchor="middle" dominant-baseline="middle" x={-50} y={500}>1</text>
@@ -107,31 +171,31 @@
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" y1={probTree.children[0]*1000+((1-probTree.children[0])*750)} x1="-50" y2={1000} x2="-50" stroke-dasharray="10 10" />
 
 	<text clip-path={`path('M${probTree.self*1000},0L1000,0L1000,${probTree.children[1]*1000}L${probTree.self*1000},${probTree.children[1]*1000}Z')`}  text-anchor="end" dominant-baseline="middle" x={980} y={probTree.children[1]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 	<text clip-path={`path('M${probTree.self*1000},${probTree.children[1]*1000}L1000,${probTree.children[1]*1000}L1000,1000L${probTree.self*1000},1000Z')`} text-anchor="end" dominant-baseline="middle" x={980} y={500 + probTree.children[1]*500}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>|</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="end" dominant-baseline="middle" x={-20} y={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="end" dominant-baseline="middle" x={-20} y={500 + probTree.children[0]*500}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="middle" dominant-baseline="middle" x={1050} y={500}>1</text>
 	{/if}
 
-	<text clip-path={`path('M0,0L${probTree.self*1000},0L${probTree.self*1000},${probTree.children[0]*1000}L0,${probTree.children[0]*1000}Z')`} stroke="#faf" stroke-width="10"  paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2} y={probTree.children[0]*1000 / 2}>
+	<text clip-path={`path('M0,0L${probTree.self*1000},0L${probTree.self*1000},${probTree.children[0]*1000}L0,${probTree.children[0]*1000}Z')`} stroke="#faf" stroke-width="10"  paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2 + (probTree.self > 0.5 ? 50 : 0)} y={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#0af" stroke-width="10" clip-path={`path('M${probTree.self*1000},0L1000,0L1000,${probTree.children[1]*1000}L${probTree.self*1000},${probTree.children[1]*1000}Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2} y={probTree.children[1]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text stroke="#0af" stroke-width="10" clip-path={`path('M${probTree.self*1000},0L1000,0L1000,${probTree.children[1]*1000}L${probTree.self*1000},${probTree.children[1]*1000}Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2 + (probTree.self > 0.5 ? 0 : -50)} y={probTree.children[1]*1000 / 2}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#fa0" stroke-width="10" clip-path={`path('M0,${probTree.children[0]*1000}L${probTree.self*1000},${probTree.children[0]*1000}L${probTree.self*1000},1000L0,1000Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2} y={500 + probTree.children[0]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text stroke="#fa0" stroke-width="10" clip-path={`path('M0,${probTree.children[0]*1000}L${probTree.self*1000},${probTree.children[0]*1000}L${probTree.self*1000},1000L0,1000Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2 + (probTree.self > 0.5 ? 50 : 0)} y={500 + probTree.children[0]*1000 / 2}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#0a0" stroke-width="10" clip-path={`path('M${probTree.self*1000},${probTree.children[1]*1000}L1000,${probTree.children[1]*1000}L1000,1000L${probTree.self*1000},1000Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2} y={500 + probTree.children[1]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text stroke="#0a0" stroke-width="10" clip-path={`path('M${probTree.self*1000},${probTree.children[1]*1000}L1000,${probTree.children[1]*1000}L1000,1000L${probTree.self*1000},1000Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2 + (probTree.self > 0.5 ? 0 : -50)} y={500 + probTree.children[1]*1000 / 2}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 </svg>
 {:else}
@@ -154,19 +218,17 @@
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" y1="600" x1="1050" y2={1000} x2="1050" stroke-dasharray="10 10" />
 
 
-	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[0]*(1000-6)} y="0" width="6" height={probTree.self*1000-5} />
+	<rect style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[0]*(1000-6)} y="0" width="6" height={probTree.self*1000-5} on:mousedown={dragStart}  data-child="true" class:dragging={dragTrueChild}/>
 
-	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[1]*(1000-6)} y={probTree.self*(1000-6)+5} width="6" height={(1-probTree.self)*1000} />
+	<rect style="cursor: col-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" x={probTree.children[1]*(1000-6)} y={probTree.self*(1000-6)+5} width="6" height={(1-probTree.self)*1000} on:mousedown={dragStart}  data-child="false" class:dragging={dragFalseChild}/>
 
-	<rect stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.self*(1000-6)} x="-100" height="6" width="1100" />
+	<rect style="cursor: row-resize;" stroke-width="10" paint-order="stroke" stroke="#fff" fill="#333" y={probTree.self*(1000-6)} x="-100" height="6" width="1100" on:mousedown={dragStart} class:dragging={!dragTrueChild && !dragFalseChild && dragTarget != null}/>
 
-
-	<rect fill="none" stroke-width="10" stroke="#fff" y="-100" x="-100" height="1200" width="1200" />
 
 	
 
 	<text  text-anchor="end" dominant-baseline="middle" y={probTree.self*1000 / 2} x={-25}><tspan>Pr(</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan></text>
-	<text  text-anchor="end" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={-25}><tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan></text>
+	<text  text-anchor="end" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={-25}><tspan>Pr(</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan></text>
 	<text  text-anchor="middle" dominant-baseline="middle" y={500} x={1050}>1</text>
 
 	{#if probTree.self > 0.5}
@@ -196,16 +258,16 @@
 	
 
 	<text  text-anchor="middle" dominant-baseline="hanging" y={1020} x={probTree.children[1]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="middle" dominant-baseline="hanging" y={1020} x={500 + probTree.children[1]*500}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>|</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text text-anchor="middle" dominant-baseline="hanging" y={20} x={probTree.children[0]*1000 / 2}>
+	<text clip-path={`path('M0,0L0,${probTree.self*1000}L${probTree.children[0]*1000},${probTree.self*1000}L${probTree.children[0]*1000},0Z')`} text-anchor="middle" dominant-baseline="hanging" y={20} x={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text text-anchor="middle" dominant-baseline="hanging" y={20} x={500 + probTree.children[0]*500}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text  clip-path={`path('M${probTree.children[0]*1000},0L${probTree.children[0]*1000},${probTree.self*1000}L1000,${probTree.self*1000}L1000,0Z')`} text-anchor="middle" dominant-baseline="hanging" y={20} x={500 + probTree.children[0]*500}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 
 	<text text-anchor="middle" dominant-baseline="middle" y={-50} x={500}>1</text>
@@ -235,32 +297,34 @@
 
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" x1={probTree.children[0]*1000+((1-probTree.children[0])*750)} y1="-50" x2={1000} y2="-50" stroke-dasharray="10 10" />
 
-	<text  text-anchor="middle" dominant-baseline="ideographic" y={980} x={probTree.children[1]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text  clip-path={`path('M0,${probTree.self*1000}L0,1000L${probTree.children[1]*1000},1000L${probTree.children[1]*1000},${probTree.self*1000}Z')`} text-anchor="middle" dominant-baseline="ideographic" y={980} x={probTree.children[1]*1000 / 2}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text text-anchor="middle" dominant-baseline="ideographic" y={980} x={500 + probTree.children[1]*500}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>|</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text  clip-path={`path('M${probTree.children[1]*1000},${probTree.self*1000}L${probTree.children[1]*1000},1000L1000,1000L1000,${probTree.self*1000}Z')`} text-anchor="middle" dominant-baseline="ideographic" y={980} x={500 + probTree.children[1]*500}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="middle" dominant-baseline="ideographic" y={-20} x={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="middle" dominant-baseline="ideographic" y={-20} x={500 + probTree.children[0]*500}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="middle" dominant-baseline="middle" y={1050} x={500}>1</text>
 	{/if}
 
-	<text stroke="#faf" stroke-width="10"  paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={probTree.self*1000 / 2} x={probTree.children[0]*1000 / 2}>
+	<text clip-path={`path('M0,0L0,${probTree.self*1000}L${probTree.children[0]*1000},${probTree.self*1000}L${probTree.children[0]*1000},0Z')`} stroke="#faf" stroke-width="10"  paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={probTree.self*1000 / 2} x={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#fa0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={probTree.children[1]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text  clip-path={`path('M0,${probTree.self*1000}L0,1000L${probTree.children[1]*1000},1000L${probTree.children[1]*1000},${probTree.self*1000}Z')`}  stroke="#fa0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={probTree.children[1]*1000 / 2}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#0af" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={probTree.self*1000 / 2} x={500 + probTree.children[0]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text  clip-path={`path('M${probTree.children[0]*1000},0L${probTree.children[0]*1000},${probTree.self*1000}L1000,${probTree.self*1000}L1000,0Z')`}  stroke="#0af" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={probTree.self*1000 / 2} x={500 + probTree.children[0]*1000 / 2}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#0a0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={500 + probTree.children[1]*1000 / 2}>
-		<tspan>Pr(</tspan><tspan text-decoration="overline">{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan text-decoration="overline">{probTree.labels[0]}</tspan><tspan>)</tspan>
+	<text  clip-path={`path('M${probTree.children[1]*1000},${probTree.self*1000}L${probTree.children[1]*1000},1000L1000,1000L1000,${probTree.self*1000}Z')`} stroke="#0a0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={500 + probTree.children[1]*1000 / 2}>
+		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 </svg>
 {/if}
+	
+</div>
