@@ -64,7 +64,7 @@
 <style>
 	.container {
 		display:  grid;
-		grid-template-columns: repeat(auto-fill, minmax(25em, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(25em, 1fr));
 		gap: 0 3em;
 		max-width: 70em;
 		justify-content: center;
@@ -73,12 +73,12 @@
 		margin: auto;
 		box-sizing: border-box;
 	}
-	
-	
-	
-	.body {
-		grid-area: body;
-		pointer-events: none;
+
+	@media(max-width: 25em) {
+
+		.container {
+			grid-template-columns: 1fr;
+		}
 	}
 	
 	.slider-container {
@@ -91,8 +91,8 @@
 	}
 	
 	input[type=range] {
-		width: 100%;
 		margin: 0;
+		width: 100%;
 	}
 	
 	input[type=number] {
@@ -128,10 +128,6 @@
 		line-height: 0.8em;
 		display: inline-block;
 	}
-
-	.nowrap {
-		white-space: nowrap;
-	}
 </style>
 
 <div class="titel-bar">
@@ -157,14 +153,14 @@
 <label style="grid-column: 1 / -1; justify-self: start;">
 Label: <input required type="text" maxlength="1" size="1" value={probTree.labels[0]} on:input={(evt) => {probTree.labels[0] = evt.currentTarget.value || 'A'}} placeholder="A"></label>
 <span>Pr({probTree.labels[0]}):</span> 
-<input style="accent-color:black" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(probTree.self)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
-<input length="4" type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(probTree.self)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
+<input style="accent-color:black" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(probTree.self).toFixed(fractionDigits)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
+<input length="4" type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(probTree.self).toFixed(fractionDigits)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
 <span>Pr({probTree.labels[1]}|{probTree.labels[0]}):</span> 
-<input style="accent-color:#faf" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(probTree.children[0])} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 0, evt.currentTarget.valueAsNumber)} />
-<input type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(probTree.children[0])} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 0, evt.currentTarget.valueAsNumber)} />
+<input style="accent-color:#faf" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(probTree.children[0]).toFixed(fractionDigits)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 0, evt.currentTarget.valueAsNumber)} />
+<input type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(probTree.children[0]).toFixed(fractionDigits)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 0, evt.currentTarget.valueAsNumber)} />
 <span>Pr({probTree.labels[1]}|<span class="negation">{probTree.labels[0]}</span>): </span>
-<input style="accent-color:#0af" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(probTree.children[1])} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 1, evt.currentTarget.valueAsNumber)} />
-<input type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(probTree.children[1])} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 1, evt.currentTarget.valueAsNumber)} />
+<input style="accent-color:#0af" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(probTree.children[1]).toFixed(fractionDigits)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 1, evt.currentTarget.valueAsNumber)} />
+<input type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(probTree.children[1]).toFixed(fractionDigits)} on:input={(evt) => setProbabilities(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 1, evt.currentTarget.valueAsNumber)} />
 
 </div>
 		
@@ -176,14 +172,14 @@ Label: <input required type="text" maxlength="1" size="1" value={probTree.labels
 		<label style="grid-column: 1 / -1; justify-self: start;">
 Label: <input required type="text" maxlength="1" size="1" value={probTree.labels[1]} on:input={(evt) => {probTree.labels[1] = evt.currentTarget.value || 'B'}} placeholder="B"></label>
 <span>Pr({transposed.labels[0]}): </span>
-<input style="accent-color:#000" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(transposed.self)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
-<input length="4" type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(transposed.self)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
+<input style="accent-color:#000" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(transposed.self).toFixed(fractionDigits)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
+<input length="4" type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(transposed.self).toFixed(fractionDigits)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 'self', evt.currentTarget.valueAsNumber)} />
 <span>Pr({transposed.labels[1]}|{transposed.labels[0]}): </span>
-<input style="accent-color:#faf" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(transposed.children[0])} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 0, evt.currentTarget.valueAsNumber)} />
-<input type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(transposed.children[0])} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 0, evt.currentTarget.valueAsNumber)} />
+<input style="accent-color:#faf" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(transposed.children[0]).toFixed(fractionDigits)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 0, evt.currentTarget.valueAsNumber)} />
+<input type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(transposed.children[0]).toFixed(fractionDigits)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 0, evt.currentTarget.valueAsNumber)} />
 <span>Pr({transposed.labels[1]}|<span class="negation">{transposed.labels[0]}</span>):</span> 
-<input style="accent-color:#fa0" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(transposed.children[1])} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 1, evt.currentTarget.valueAsNumber)} />
-<input type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={formatter.format(transposed.children[1])} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 1, evt.currentTarget.valueAsNumber)} />
+<input style="accent-color:#fa0" type="range" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(transposed.children[1]).toFixed(fractionDigits)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 1, evt.currentTarget.valueAsNumber)} />
+<input type="number" min="0" step={Math.pow(10,-fractionDigits)} max="1" value={(transposed.children[1]).toFixed(fractionDigits)} on:input={(evt) => setTransposed(JSON.parse(evt.currentTarget.parentNode.dataset.tree), 1, evt.currentTarget.valueAsNumber)} />
 </div>
 	</div>
 

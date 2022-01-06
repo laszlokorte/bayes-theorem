@@ -163,10 +163,10 @@
 	<text text-anchor="start" dominant-baseline="middle" x={1020} y={500 + probTree.children[1]*500}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text clip-path={`path('M0,0L${probTree.self*1000},0L${probTree.self*1000},${probTree.children[0]*1000}L0,${probTree.children[0]*1000}Z')`} text-anchor="start" dominant-baseline="middle" x={20} y={probTree.children[0]*1000 / 2}>
+	<text clip-path={null && `path('M0,0L${probTree.self*1000},0L${probTree.self*1000},${probTree.children[0]*1000}L0,${probTree.children[0]*1000}Z') view-box`} text-anchor="start" dominant-baseline="middle" x={20} y={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text clip-path={`path('M0,${probTree.children[0]*1000}L${probTree.self*1000},${probTree.children[0]*1000}L${probTree.self*1000},1000L0,1000Z')`} text-anchor="start" dominant-baseline="middle" x={20} y={500 + probTree.children[0]*500}>
+	<text clip-path={null && `path('M0,${probTree.children[0]*1000}L${probTree.self*1000},${probTree.children[0]*1000}L${probTree.self*1000},1000L0,1000Z') view-box`} text-anchor="start" dominant-baseline="middle" x={20} y={500 + probTree.children[0]*500}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 
@@ -197,10 +197,10 @@
 
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" y1={probTree.children[0]*1000+((1-probTree.children[0])*750)} x1="-50" y2={1000} x2="-50" stroke-dasharray="10 10" />
 
-	<text clip-path={`path('M${probTree.self*1000},0L1000,0L1000,${probTree.children[1]*1000}L${probTree.self*1000},${probTree.children[1]*1000}Z')`}  text-anchor="end" dominant-baseline="middle" x={980} y={probTree.children[1]*1000 / 2}>
+	<text clip-path={null && `path('M${probTree.self*1000},0L1000,0L1000,${probTree.children[1]*1000}L${probTree.self*1000},${probTree.children[1]*1000}Z') view-box`}  text-anchor="end" dominant-baseline="middle" x={980} y={probTree.children[1]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text clip-path={`path('M${probTree.self*1000},${probTree.children[1]*1000}L1000,${probTree.children[1]*1000}L1000,1000L${probTree.self*1000},1000Z')`} text-anchor="end" dominant-baseline="middle" x={980} y={500 + probTree.children[1]*500}>
+	<text clip-path={null && `path('M${probTree.self*1000},${probTree.children[1]*1000}L1000,${probTree.children[1]*1000}L1000,1000L${probTree.self*1000},1000Z') view-box`} text-anchor="end" dominant-baseline="middle" x={980} y={500 + probTree.children[1]*500}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="end" dominant-baseline="middle" x={-20} y={probTree.children[0]*1000 / 2}>
@@ -212,16 +212,16 @@
 	<text text-anchor="middle" dominant-baseline="middle" x={1050} y={500}>1</text>
 	{/if}
 
-	<text clip-path={`path('M0,0L${probTree.self*1000},0L${probTree.self*1000},${probTree.children[0]*1000}L0,${probTree.children[0]*1000}Z')`} stroke="#faf" stroke-width="10"  paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2 + (probTree.self > 0.5 ? 50 : 0)} y={probTree.children[0]*1000 / 2}>
+	<text clip-path={null && `path('M0,0L${probTree.self*1000},0L${probTree.self*1000},${probTree.children[0]*1000}L0,${probTree.children[0]*1000}Z') view-box`} stroke="#faf" stroke-width="10"  paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2 + (probTree.self > 0.5 ? 50 : 0)} y={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#0af" stroke-width="10" clip-path={`path('M${probTree.self*1000},0L1000,0L1000,${probTree.children[1]*1000}L${probTree.self*1000},${probTree.children[1]*1000}Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2 + (probTree.self > 0.5 ? 0 : -50)} y={probTree.children[1]*1000 / 2}>
+	<text stroke="#0af" stroke-width="10" clip-path={null && `path('M${probTree.self*1000},0L1000,0L1000,${probTree.children[1]*1000}L${probTree.self*1000},${probTree.children[1]*1000}Z') view-box`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2 + (probTree.self > 0.5 ? 0 : -50)} y={probTree.children[1]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#fa0" stroke-width="10" clip-path={`path('M0,${probTree.children[0]*1000}L${probTree.self*1000},${probTree.children[0]*1000}L${probTree.self*1000},1000L0,1000Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2 + (probTree.self > 0.5 ? 50 : 0)} y={500 + probTree.children[0]*1000 / 2}>
+	<text stroke="#fa0" stroke-width="10" clip-path={null && `path('M0,${probTree.children[0]*1000}L${probTree.self*1000},${probTree.children[0]*1000}L${probTree.self*1000},1000L0,1000Z') view-box`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={probTree.self*1000 / 2 + (probTree.self > 0.5 ? 50 : 0)} y={500 + probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text stroke="#0a0" stroke-width="10" clip-path={`path('M${probTree.self*1000},${probTree.children[1]*1000}L1000,${probTree.children[1]*1000}L1000,1000L${probTree.self*1000},1000Z')`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2 + (probTree.self > 0.5 ? 0 : -50)} y={500 + probTree.children[1]*1000 / 2}>
+	<text stroke="#0a0" stroke-width="10" clip-path={null && `path('M${probTree.self*1000},${probTree.children[1]*1000}L1000,${probTree.children[1]*1000}L1000,1000L${probTree.self*1000},1000Z') view-box`} paint-order="stroke" text-anchor="middle" dominant-baseline="middle" x={500+probTree.self*1000 / 2 + (probTree.self > 0.5 ? 0 : -50)} y={500 + probTree.children[1]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 
@@ -294,10 +294,10 @@
 	<text text-anchor="middle" dominant-baseline="hanging" y={1020} x={500 + probTree.children[1]*500}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text clip-path={`path('M0,0L0,${probTree.self*1000}L${probTree.children[0]*1000},${probTree.self*1000}L${probTree.children[0]*1000},0Z')`} text-anchor="middle" dominant-baseline="hanging" y={20} x={probTree.children[0]*1000 / 2}>
+	<text clip-path={null && `path('M0,0L0,${probTree.self*1000}L${probTree.children[0]*1000},${probTree.self*1000}L${probTree.children[0]*1000},0Z') view-box`} text-anchor="middle" dominant-baseline="hanging" y={20} x={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text  clip-path={`path('M${probTree.children[0]*1000},0L${probTree.children[0]*1000},${probTree.self*1000}L1000,${probTree.self*1000}L1000,0Z')`} text-anchor="middle" dominant-baseline="hanging" y={20} x={500 + probTree.children[0]*500}>
+	<text  clip-path={null && `path('M${probTree.children[0]*1000},0L${probTree.children[0]*1000},${probTree.self*1000}L1000,${probTree.self*1000}L1000,0Z') view-box`} text-anchor="middle" dominant-baseline="hanging" y={20} x={500 + probTree.children[0]*500}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
 
@@ -328,10 +328,10 @@
 
 	<line marker-end="url(#arrowhead)"  stroke="#333" stroke-width="4" x1={probTree.children[0]*1000+((1-probTree.children[0])*750)} y1="-50" x2={1000} y2="-50" stroke-dasharray="10 10" />
 
-	<text  clip-path={`path('M0,${probTree.self*1000}L0,1000L${probTree.children[1]*1000},1000L${probTree.children[1]*1000},${probTree.self*1000}Z')`} text-anchor="middle" dominant-baseline="ideographic" y={980} x={probTree.children[1]*1000 / 2}>
+	<text  clip-path={null && `path('M0,${probTree.self*1000}L0,1000L${probTree.children[1]*1000},1000L${probTree.children[1]*1000},${probTree.self*1000}Z') view-box`} text-anchor="middle" dominant-baseline="ideographic" y={980} x={probTree.children[1]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text  clip-path={`path('M${probTree.children[1]*1000},${probTree.self*1000}L${probTree.children[1]*1000},1000L1000,1000L1000,${probTree.self*1000}Z')`} text-anchor="middle" dominant-baseline="ideographic" y={980} x={500 + probTree.children[1]*500}>
+	<text  clip-path={null && `path('M${probTree.children[1]*1000},${probTree.self*1000}L${probTree.children[1]*1000},1000L1000,1000L1000,${probTree.self*1000}Z') view-box`} text-anchor="middle" dominant-baseline="ideographic" y={980} x={500 + probTree.children[1]*500}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>|</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 	<text text-anchor="middle" dominant-baseline="ideographic" y={-20} x={probTree.children[0]*1000 / 2}>
@@ -343,16 +343,16 @@
 	<text text-anchor="middle" dominant-baseline="middle" y={1050} x={500}>1</text>
 	{/if}
 
-	<text clip-path={`path('M0,0L0,${probTree.self*1000}L${probTree.children[0]*1000},${probTree.self*1000}L${probTree.children[0]*1000},0Z')`} stroke="#faf" stroke-width="10"  paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={probTree.self*1000 / 2} x={probTree.children[0]*1000 / 2}>
+	<text clip-path={null && `path('M0,0L0,${probTree.self*1000}L${probTree.children[0]*1000},${probTree.self*1000}L${probTree.children[0]*1000},0Z') view-box`} stroke="#faf" stroke-width="10"  paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={probTree.self*1000 / 2} x={probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text  clip-path={`path('M0,${probTree.self*1000}L0,1000L${probTree.children[1]*1000},1000L${probTree.children[1]*1000},${probTree.self*1000}Z')`}  stroke="#fa0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={probTree.children[1]*1000 / 2}>
+	<text  clip-path={null && `path('M0,${probTree.self*1000}L0,1000L${probTree.children[1]*1000},1000L${probTree.children[1]*1000},${probTree.self*1000}Z') view-box`}  stroke="#fa0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={probTree.children[1]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
-	<text  clip-path={`path('M${probTree.children[0]*1000},0L${probTree.children[0]*1000},${probTree.self*1000}L1000,${probTree.self*1000}L1000,0Z')`}  stroke="#0af" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={probTree.self*1000 / 2} x={500 + probTree.children[0]*1000 / 2}>
+	<text  clip-path={null && `path('M${probTree.children[0]*1000},0L${probTree.children[0]*1000},${probTree.self*1000}L1000,${probTree.self*1000}L1000,0Z') view-box`}  stroke="#0af" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={probTree.self*1000 / 2} x={500 + probTree.children[0]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}</tspan><tspan>)</tspan>
 	</text>
-	<text  clip-path={`path('M${probTree.children[1]*1000},${probTree.self*1000}L${probTree.children[1]*1000},1000L1000,1000L1000,${probTree.self*1000}Z')`} stroke="#0a0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={500 + probTree.children[1]*1000 / 2}>
+	<text  clip-path={null && `path('M${probTree.children[1]*1000},${probTree.self*1000}L${probTree.children[1]*1000},1000L1000,1000L1000,${probTree.self*1000}Z') view-box`} stroke="#0a0" stroke-width="10" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" y={500+probTree.self*1000 / 2} x={500 + probTree.children[1]*1000 / 2}>
 		<tspan>Pr(</tspan><tspan>{probTree.labels[1]}&#773;</tspan><tspan>∩</tspan><tspan>{probTree.labels[0]}&#773;</tspan><tspan>)</tspan>
 	</text>
 
