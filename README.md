@@ -1,4 +1,4 @@
-![preview.png]
+![Screenshot of the app](preview.png)
 
 
 # Dependent probabilities explained geometrically
