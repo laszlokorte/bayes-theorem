@@ -1,5 +1,6 @@
 <script>
 	import Arrow from './Arrow.svelte'
+	import Chart from './Chart.svelte'
 
 	function baysianTranspose(probs) {
 		const newSelf = 1*probs.children[0] * probs.self + 1*probs.children[1] * (1 - probs.self)
@@ -592,7 +593,9 @@ Label: <input required type="text" maxlength="3" size="3" value={probTree.labels
 			</div>
 		</div>
 	</div>
+
 </div>
+	<Chart probTree={probTree} direction="vertical" />
 	</div>
 
 	
@@ -692,7 +695,8 @@ Label: <input required type="text" maxlength="3" size="3" value={probTree.labels
 		</div>
 	</div>
 </div>
-	
+		<Chart probTree={transposed} direction="horizontal" />
+
 	</div>
 
 
