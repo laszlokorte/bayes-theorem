@@ -1,5 +1,7 @@
 ![Screenshot of the app](preview.png)
 
+[Live Demo](https://static.laszlokorte.de/stochastic/)
+
 
 # Dependent probabilities explained geometrically
 
