@@ -58,11 +58,49 @@
 			dragFalseChild = null;
 		}
 	}
+	
+
+	function wheel(evt) {
+		if(!evt.altKey && !evt.shiftKey) {
+			return;
+		}
+
+		evt.preventDefault();
+		evt.stopPropagation()
+
+		const grid = evt.currentTarget.closest('.grid')
+		const child = evt.currentTarget.closest('.children')
+		const d = Math.sign(evt.wheelDeltaY) * 0.05
+		const old = JSON.parse(grid.querySelector('.body').dataset.tree)
+
+		if(grid.classList.contains('v')) {
+			if(!child || (evt.shiftKey && evt.altKey)) {
+				setProbabilities(old, 'self', clamp(0,1, old.self + d))
+			} else if(child.classList.contains('true-children')) {
+				setProbabilities(old, 0, clamp(0,1,old.children[0] + d))
+			} else if(child.classList.contains('false-children')) {
+				setProbabilities(old, 1, clamp(0,1,old.children[1] + d))
+			}
+		} else if(grid.classList.contains('h')) {
+			if(!child || (evt.shiftKey && evt.altKey)) {
+				setTransposed(old, 'self', clamp(0,1,old.self + d))
+			} else if(child.classList.contains('true-children')) {
+				setTransposed(old, 0, clamp(0,1,old.children[0] + d))
+			} else if(child.classList.contains('false-children')) {
+				setTransposed(old, 1, clamp(0,1,old.children[1] + d))
+			}
+		}
+	}
 </script>
 
 <style>
 	.dragging {
 		fill:  yellow;
+	}
+
+	svg {
+		width: 100%; 
+		height: auto;
 	}
 </style>
 
@@ -70,7 +108,7 @@
 
 <div bind:this={dragRef} data-tree={JSON.stringify(probTree)}>
 {#if direction=='vertical'}
-<svg style="width: 50vmin; height: auto;" viewBox="-200 -200 1400 1400" font-size="50">
+<svg viewBox="-200 -200 1400 1400" font-size="50">
 	
 
 	<rect fill="#faf" x="0" y="0" width={probTree.self*1000} height={probTree.children[0]*1000} />
@@ -199,7 +237,7 @@
 	</text>
 </svg>
 {:else}
-<svg style="width: 50vmin; height: auto;" viewBox="-200 -200 1400 1400" font-size="50">
+<svg viewBox="-200 -200 1400 1400" font-size="50">
 	
 
 	<rect fill="#faf" y="0" x="0" height={probTree.self*1000} width={probTree.children[0]*1000} />
