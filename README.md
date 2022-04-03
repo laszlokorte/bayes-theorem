@@ -1,6 +1,6 @@
 ![Screenshot of the app](preview.png)
 
-[Live Demo](https://static.laszlokorte.de/stochastic/)
+[Live Demo](https://static.laszlokorte.de/stochastic/) | [Short demo video](https://www.youtube.com/watch?v=-IMmclXe_V4&t=4s)
 
 
 # Dependent probabilities explained geometrically
