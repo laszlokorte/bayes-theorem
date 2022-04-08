@@ -75,7 +75,7 @@
 
 		const trueChild = evt.currentTarget.getAttribute('data-child') === 'true'
 		const falseChild = evt.currentTarget.getAttribute('data-child') === 'false'
-		const d = Math.sign(evt.wheelDeltaY) * 0.05
+		const d = Math.sign(evt.wheelDeltaY || evt.deltaY / 10) * 0.05
 
 		if(!(trueChild || falseChild) || (evt.shiftKey && evt.altKey)) {
 			setProbabilities(probTree, 'self', clamp(0,1, probTree.self + d))
